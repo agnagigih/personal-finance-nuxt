@@ -24,9 +24,12 @@ const nextPage = () => {
     <div
         class="flex flex-wrap items-center justify-between gap-4 border-t border-stone-200/80 bg-stone-50/50 px-4 py-4 sm:px-6"
       >
-        <p class="text-sm text-stone-500">
-          Page {{ page }} of {{ totalPages || 1 }}
-        </p>
+        <div class="flex flex-wrap items-center gap-4">
+          <slot name="prepend" />
+          <p class="text-sm text-stone-500">
+            Page {{ page }} of {{ totalPages || 1 }}
+          </p>
+        </div>
         <div class="flex items-center gap-2">
           <button
             type="button"

@@ -1,58 +1,20 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import type { TransactionView } from '~/types/view/transactionView'
-import { useTransactionApi } from '~/composables/useTransactionApi'
-import { mapTransactionToView } from '~/mappers/transaction.mapper'
-
-const route = useRoute()
-const router = useRouter()
-
-const { getTransactions } = useTransactionApi()
-const transactions = ref<TransactionView[]>([])
-const page = ref(Number(route.query.page) || 1)
-const totalPages = ref(1)
-
-const loading = ref(true)
-const error = ref<string | null>(null)
+import { useTransactions } from '~/composables/useTransactions'
 
 definePageMeta({
   middleware: 'auth',
 })
 
-const loadTransactions = async () => {
-  loading.value = true
-  error.value = null
-
-  try {
-    const paged = await getTransactions(page.value, 10)
-    transactions.value = paged.items.map(mapTransactionToView)
-    totalPages.value = paged.totalPages
-  } catch (err) {
-    error.value = 'Failed to load transactions'
-    console.error(err)
-  }
-  finally {
-    loading.value = false
-  }
-}
-
-const updatePage = async (newPage: number) => {
-  page.value = newPage
-  
-  await router.replace({
-    query:{
-      ...route.query,
-      page: String(newPage),
-    },
-  })
-
-  await loadTransactions()
-}
-
-onMounted(async () => {
-  loadTransactions()
-})
+const {
+  transactions,
+  page,
+  pageSize,
+  totalPages,
+  loading,
+  error,
+  updatePage,
+  changePageSize
+} = useTransactions()
 
 </script>
 
@@ -142,13 +104,32 @@ onMounted(async () => {
           </p>
         </li>
       </ul>
-      <!-- Pagination -->
+      <!-- Pagination + page size -->
       <Pagination
         :page="page"
         :total-pages="totalPages"
         :loading="loading"
         @change="updatePage"
-      />
+      >
+        <template #prepend>
+          <div class="flex items-center gap-2">
+            <label for="page-size" class="text-sm text-stone-500">
+              Show
+            </label>
+            <select
+              id="page-size"
+              v-model.number="pageSize"
+              @change="() => changePageSize(pageSize)"
+              class="rounded-xl border border-stone-300 bg-white px-3 py-2 text-sm font-medium text-stone-700 transition hover:border-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50 disabled:opacity-50"
+            >
+              <option :value="10">10</option>
+              <option :value="20">20</option>
+              <option :value="50">50</option>
+            </select>
+            <span class="text-sm text-stone-500">per page</span>
+          </div>
+        </template>
+      </Pagination>
     </div>
   </div>
 </template>
