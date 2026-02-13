@@ -2,7 +2,7 @@
 import { useAuthStore } from '~/stores/auth'
 
 const auth = useAuthStore()
-auth.init()
+  auth.init()
 </script>
 
 <template>

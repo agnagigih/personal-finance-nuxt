@@ -1,0 +1,219 @@
+<script setup lang="ts">
+import type { CategoryView } from '~/types/view/CategoryView';
+import { mapCategoryToView } from '~/mappers/category.mapper';
+import { CategoryType } from '~/types/view/CategoryView';
+
+definePageMeta({
+    middleware: 'auth'
+})
+
+const { getCategories, createCategory } = useCategoryApi()
+
+const showModal = ref(false)
+const categories = ref<CategoryView[]>([])
+const loading = ref(true)
+const error = ref<string | null>(null)
+
+const loadCategories = async () => {
+    loading.value = true
+    error.value = null
+
+    try {
+        categories.value = await getCategories()
+    } catch (err) {
+        error.value = 'Failed to load categories'
+    } finally {
+        loading.value = false
+    }
+}
+
+onMounted(loadCategories)
+
+// form state
+const name = ref('')
+const type = ref(CategoryType.Expense)
+
+const openModal = () => {
+    showModal.value = true
+    name.value = ''
+    type.value = CategoryType.Expense
+    error.value = null
+}
+
+const closeModal = () => {
+    showModal.value = false
+    error.value = null
+}
+
+const submitForm = async () => {
+    if (!name.value) {
+        error.value = 'Name is required'
+        return
+    }
+
+    loading.value = true
+    error.value = null
+
+    try {
+        const created = await createCategory({
+            name: name.value,
+            type: type.value,
+        })
+        if (created != null) {
+            categories.value.push(mapCategoryToView(created))
+        }
+        closeModal()
+    } catch (err) {
+        error.value = (err as Error).message
+    } finally {
+        loading.value = false
+    }
+}
+</script>
+
+<template>
+  <div class="space-y-6">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h1 class="text-2xl font-semibold text-slate-800 tracking-tight">
+          Categories
+        </h1>
+        <p class="text-slate-500 text-sm mt-1">
+          Income and expense categories
+        </p>
+      </div>
+      <div>
+        <button
+          v-if="!loading"
+          type="button"
+          class="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-medium py-2.5 px-2.5 shadow-sm hover:shadow transition focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 active:scale-[0.98]"
+          @click="openModal"
+        >
+          <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Add Category
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div
+      v-if="loading"
+      class="bg-white rounded-2xl shadow-lg shadow-slate-200/50 border border-slate-200/80 p-6"
+    >
+      Loading...
+    </div>
+
+    <!-- Error -->
+    <div
+      v-else-if="error"
+      class="rounded-xl bg-red-50 border border-red-200 text-red-800 text-sm px-4 py-3"
+    >
+      {{ error }}
+    </div>
+
+    <!-- Empty -->
+    <div
+      v-else-if="!categories.length"
+      class="bg-white rounded-2xl shadow-lg shadow-slate-200/50 border border-slate-200/80 p-12 text-center"
+    >
+      <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-400 mb-6">
+        <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7a1.994 1.994 0 01-.586-1.414V7a4 4 0 014-4z" />
+        </svg>
+      </div>
+      <p class="text-slate-600 font-medium">
+        No categories yet
+      </p>
+      <p class="text-slate-500 text-sm mt-1">
+        Create your first category to organize transactions.
+      </p>
+    </div>
+
+    <!-- List -->
+    <div
+      v-else
+      class="bg-white rounded-2xl shadow-lg shadow-slate-200/50 border border-slate-200/80 overflow-hidden"
+    >
+      <ul class="divide-y divide-slate-200/80">
+        <li
+          v-for="cat in categories"
+          :key="cat.id"
+          class="flex items-center justify-between px-4 py-4 sm:px-6 hover:bg-slate-50/80 transition"
+        >
+          <div>
+            <p class="font-medium text-slate-800">
+              {{ cat.name }}
+            </p>
+            <p class="text-sm text-slate-500">
+              Type: {{ cat.typeLabel }}
+            </p>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <Modal v-if="showModal" @close="closeModal">
+    <template #title>
+      Create New Category
+    </template>
+
+    <template #body>
+      <div class="space-y-5">
+        <div
+          v-if="error"
+          role="alert"
+          class="rounded-xl bg-red-50 border border-red-200 text-red-800 text-sm px-4 py-3"
+        >
+          {{ error }}
+        </div>
+
+        <div>
+          <label for="category-name" class="block text-sm font-medium text-slate-700 mb-1.5">Name</label>
+          <input
+            id="category-name"
+            v-model="name"
+            type="text"
+            placeholder="e.g. Salary, Food"
+            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition"
+            :disabled="loading"
+          />
+        </div>
+
+        <div>
+          <label for="category-type" class="block text-sm font-medium text-slate-700 mb-1.5">Type</label>
+          <select
+            id="category-type"
+            v-model="type"
+            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition"
+            :disabled="loading"
+          >
+            <option :value="CategoryType.Income">Income</option>
+            <option :value="CategoryType.Expense">Expense</option>
+          </select>
+        </div>
+      </div>
+    </template>
+
+    <template #footer>
+      <button
+        type="button"
+        class="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50 disabled:opacity-50"
+        :disabled="loading"
+        @click="closeModal"
+      >
+        Cancel
+      </button>
+      <button
+        type="button"
+        class="rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-medium py-2.5 px-4 transition focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:opacity-60 disabled:pointer-events-none"
+        :disabled="loading"
+        @click="submitForm"
+      >
+        {{ loading ? 'Creating...' : 'Create' }}
+      </button>
+    </template>
+  </Modal>
+</template>

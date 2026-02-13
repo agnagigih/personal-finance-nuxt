@@ -44,13 +44,13 @@ const submit = async () => {
 </script>
 
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-stone-100 px-4">
+  <div class="min-h-screen flex items-center justify-center bg-slate-100 px-4">
     <div class="w-full max-w-sm">
-      <div class="bg-white rounded-2xl shadow-lg shadow-stone-200/50 border border-stone-200/80 p-8">
-        <h1 class="text-2xl font-semibold text-stone-800 text-center tracking-tight">
+      <div class="bg-white rounded-2xl shadow-lg shadow-slate-200/50 border border-slate-200/80 p-8">
+        <h1 class="text-2xl font-semibold text-slate-800 text-center tracking-tight">
           Sign in
         </h1>
-        <p class="text-stone-500 text-sm text-center mt-1.5">
+        <p class="text-slate-500 text-sm text-center mt-1.5">
           Use your account to continue
         </p>
 
@@ -64,7 +64,7 @@ const submit = async () => {
           </div>
 
           <div>
-            <label for="login-email" class="block text-sm font-medium text-stone-700 mb-1.5">
+            <label for="login-email" class="block text-sm font-medium text-slate-700 mb-1.5">
               Email
             </label>
             <input
@@ -73,13 +73,13 @@ const submit = async () => {
               type="email"
               autocomplete="email"
               placeholder="you@example.com"
-              class="w-full rounded-xl border border-stone-300 bg-white px-4 py-2.5 text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition"
+              class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition"
               :disabled="loading"
             />
           </div>
 
           <div>
-            <label for="login-password" class="block text-sm font-medium text-stone-700 mb-1.5">
+            <label for="login-password" class="block text-sm font-medium text-slate-700 mb-1.5">
               Password
             </label>
             <input
@@ -88,7 +88,7 @@ const submit = async () => {
               type="password"
               autocomplete="current-password"
               placeholder="••••••••"
-              class="w-full rounded-xl border border-stone-300 bg-white px-4 py-2.5 text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition"
+              class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition"
               :disabled="loading"
             />
           </div>

@@ -1,3 +1,4 @@
+import type { ApiResponse } from "~/types/api/ApiResponse"
 import type { PagedResult } from "~/types/api/pagedResult"
 import type { TransactionResponse } from "~/types/api/TransactionResponse"
 
@@ -14,5 +15,29 @@ export const useTransactionApi = () => {
         return res.data
     }
 
-    return { getTransactions }
+    const createTransaction = async (payload: {
+        accountId:string
+        categoryId:string
+        amount: number
+        type: number
+        note?: string
+        transactionDate: string
+    }
+    ) => {
+        const response = await api<ApiResponse<TransactionResponse>>('/transaction', {
+            method: 'POST',
+            body: payload
+        })
+
+        if(!response.success) {
+            throw new Error(response.error?.message || 'Failed to create transaction')
+        }
+
+        return response.data
+    }
+
+    return { 
+        getTransactions, 
+        createTransaction
+    }
 }

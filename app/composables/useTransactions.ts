@@ -14,8 +14,10 @@ export const useTransactions = () => {
   const page = ref(Number(route.query.page) || 1)
   const pageSize = ref(Number(route.query.pageSize) || 10)
   const totalPages = ref(1)
+  const totalItems = ref(0)
 
-  const loading = ref(false)
+  // Start true so server and client initial render both show loading (avoids hydration mismatch).
+  const loading = ref(true)
   const error = ref<string | null>(null)
 
   const loadTransactions = async () => {
@@ -26,6 +28,7 @@ export const useTransactions = () => {
       const paged = await getTransactions(page.value, pageSize.value)
       transactions.value = paged.items.map(mapTransactionToView)
       totalPages.value = paged.totalPages
+      totalItems.value = paged.totalCount
     } catch (err) {
       error.value = 'Failed to load transactions'
       console.error(err)
@@ -71,6 +74,7 @@ export const useTransactions = () => {
     page,
     pageSize,
     totalPages,
+    totalItems,
     loading,
     error,
     updatePage,
