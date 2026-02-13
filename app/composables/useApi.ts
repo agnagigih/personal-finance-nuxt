@@ -1,5 +1,5 @@
 import { useRuntimeConfig } from '#app'
-import { useAuthStore } from '~/stores/auth'
+import { useAuthStore } from '~/stores/authStore'
 
 /** Matches BE error shape: { Success, Data, Error: { Code, Message, Details } } */
 export interface ApiErrorResponse {
