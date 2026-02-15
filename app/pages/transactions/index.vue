@@ -122,6 +122,9 @@ function goToCreate() {
           >
             {{ tx.amountText }}
           </p>
+          <NuxtLink :to="`/transactions/${tx.id}/edit`" class="btn-edit">
+            Edit
+          </NuxtLink>
         </li>
       </ul>
       <!-- Pagination + page size -->

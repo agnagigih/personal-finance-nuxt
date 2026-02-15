@@ -1,12 +1,7 @@
 <script setup lang="ts">
-interface TransactionFormModel {
-    accountId: string
-    categoryId: string
-    amount: number
-    type: number
-    transactionDate: string
-    note: string
-}
+import type { TransactionFormModel } from '~/types/form/TransactionFormModel';
+
+
 
 const props = defineProps<{
     accounts: { id: string; name: string }[]
@@ -77,13 +72,16 @@ function validate() {
 
     if (!form.value.transactionDate) {
         formErrors.value.transactionDate = 'Date is required'
+        isValid = false
     }
     else if (new Date(form.value.transactionDate) > new Date(props.maxDate)) {
         formErrors.value.transactionDate = 'Date cannot be in the future'
+        isValid = false
     }
 
     if (!form.value.note) {
         formErrors.value.note = 'Description is required'
+        isValid = false
     }
 
     return isValid
