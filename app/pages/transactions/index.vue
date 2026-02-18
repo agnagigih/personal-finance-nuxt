@@ -122,7 +122,8 @@ function goToCreate() {
           >
             {{ tx.amountText }}
           </p>
-          <NuxtLink :to="`/transactions/${tx.id}/edit`" class="btn-edit">
+          <NuxtLink :to="`/transactions/${tx.id}/edit`" 
+            class="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50 disabled:opacity-50">
             Edit
           </NuxtLink>
         </li>

@@ -53,10 +53,18 @@ export const useTransactionApi = () => {
         return response.data
     }
 
+    const deleteTransaction = async (id: string) => {
+        const response = await api<ApiResponse<{ message:string }>>(`/transaction/${id}`, {
+            method: 'DELETE'
+        })
+        return response.data
+    }
+
     return { 
         getTransactions, 
         createTransaction,
         getTransactionById,
-        updateTransaction
+        updateTransaction,
+        deleteTransaction
     }
 }

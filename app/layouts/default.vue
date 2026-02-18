@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useAuthStore } from '~/stores/authStore'
+import ToastContainer from '~/components/ui/ToastContainer.vue';
 
 const auth = useAuthStore()
 
@@ -22,30 +23,38 @@ const navItems = [
         </NuxtLink>
 
         <div class="flex items-center gap-3">
-          <NuxtLink
-            v-for="item in navItems"
-            v-show="auth.isAuthenticated"
-            :key="item.to"
-            :to="item.to"
-            class="text-sm font-medium text-slate-600 transition hover:text-slate-900"
-          >
-            {{ item.label }}
-          </NuxtLink>
-          <NuxtLink
-            v-if="!auth.isAuthenticated"
-            to="/login"
-            class="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
-          >
-            Sign in
-          </NuxtLink>
-          <button
-            v-if="auth.isAuthenticated"
-            type="button"
-            class="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
-            @click="auth.logout()"
-          >
-            Sign out
-          </button>
+          <ClientOnly>
+            <template v-if="auth.isAuthenticated">
+              <!-- Nav items when logged in -->
+              <NuxtLink
+                v-for="item in navItems"
+                :key="item.to"
+                :to="item.to"
+                class="text-sm font-medium text-slate-600 transition hover:text-slate-900"
+              >
+                {{ item.label }}
+              </NuxtLink>
+              
+              <!-- Sign out button -->
+              <button
+                type="button"
+                class="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                @click="auth.logout()"
+              >
+                Sign out
+              </button>
+            </template>
+
+            <template v-else>
+              <!-- Sign in button when not logged in -->
+              <NuxtLink
+                to="/login"
+                class="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+              >
+                Sign in
+              </NuxtLink>
+            </template>
+          </ClientOnly>
         </div>
       </div>
     </header>
@@ -55,5 +64,7 @@ const navItems = [
         <NuxtPage />
       </div>
     </main>
+    
+    <ToastContainer />
   </div>
 </template>

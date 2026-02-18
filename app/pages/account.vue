@@ -3,11 +3,11 @@ import { useAccountApi } from '~/composables/useAccountApi';
 import type { AccountView } from '~/types/view/accountView';
 import { mapAccountToView } from '~/mappers/account.mapper';
 
-
-
 definePageMeta({
     middleware: 'auth'
 })
+
+const toast = useToast()
 
 const { getAccounts, createAccount } = useAccountApi()
 
@@ -67,6 +67,7 @@ const submitForm = async () => {
         if (account != null){
             accounts.value.push(mapAccountToView(account))
         }
+        toast.success("Account created successfully")
         closeModal()
     } catch (err) {
         error.value = (err as Error).message

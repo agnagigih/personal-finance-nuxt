@@ -7,6 +7,8 @@ definePageMeta({
     middleware: 'auth'
 })
 
+const toast = useToast()
+
 const { getCategories, createCategory } = useCategoryApi()
 
 const showModal = ref(false)
@@ -62,6 +64,7 @@ const submitForm = async () => {
         if (created != null) {
             categories.value.push(mapCategoryToView(created))
         }
+        toast.success("Category created successsfully")
         closeModal()
     } catch (err) {
         error.value = (err as Error).message

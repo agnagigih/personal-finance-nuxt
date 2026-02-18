@@ -14,6 +14,8 @@ const { createTransaction } = useTransactionApi()
 const { getAccounts } = useAccountApi()
 const { getCategories } = useCategoryApi()
 
+const toast = useToast()
+
 const accounts = ref<AccountView[]>([])
 const categories = ref<CategoryView[]>([])
 
@@ -45,7 +47,7 @@ async function handleCreate(formValue: any) {
             ...formValue,
             transactionDate: new Date(formValue.transactionDate).toISOString(),
         })
-
+        toast.success('Transaction created successfully')
         await navigateTo('/transactions')
     } catch (err: any) {
         error.value = err.message || 'Failed to create transaction'

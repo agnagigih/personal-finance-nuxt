@@ -28,7 +28,7 @@ const submit = async () => {
   loading.value = true
   try {
     await auth.login(cleanEmail, cleanPassword)
-    await navigateTo('/transactions')
+    await navigateTo('/')
   } catch (err: any) {
     const apiError = err?.data?.Error
     if (apiError) {
